@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 var Bill = require('../models/Bill');
 var Legislator = require('../models/Legislator');
-
+var BillComment = require('../models/BillComment');
+var LegislatorFollow = require('../models/LegislatorFollow')
+var BillFollow = require('../models/BillFollow');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -24,6 +26,38 @@ router.get('/bill/:name', function (req, res) {
   });
 });
 
+router.get('/billComments/:billName', function (req, res) {
+  BillComment.find({billName: req.params.billName}, function(err, docs){
+    //docs.count = 55;
+    res.send(docs);
+  });
+});
+
+router.post('/billComment', function (req, res) {
+  var newBillComment = new BillComment(req.body);
+  newBillComment.save();
+  console.log(req.body);
+  res.send(req.body);
+})
+
+router.post('/followLegislator', function (req, res) {
+  var newLegislatorFollow = new LegislatorFollow(req.body);
+  newLegislatorFollow.save();
+  console.log(res.body);
+})
+
+router.post('/followBill', function(req, res){
+  var newBillFollow = new BillFollow(req.body);
+  newBillFollow.save();
+  console.log(req.body);
+  res.send(req.body);
+})
+
+router.get('/followedBills/:name', function(req,res){
+  BillFollow.find({user: req.params.name}, function(err, docs){
+    res.send(docs);
+  });
+})
 
 router.get('/housebillsinsenate', function (req, res) {
 
@@ -111,7 +145,6 @@ router.post('/bill', function (req, res) {
   //newBill.billName = req.body.billName;
 
   newBill.save();
-
   console.log(req.body);
   res.send(req.body);
 });
